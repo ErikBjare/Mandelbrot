@@ -17,6 +17,7 @@ public class Mandelbrot {
                     break;
                 case (MandelbrotGUI.RESET):
                     w.resetPlane();
+                    gen.reset();
                     drawn = false;
                     break;
                 case (MandelbrotGUI.QUIT):
