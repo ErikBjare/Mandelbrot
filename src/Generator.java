@@ -72,6 +72,9 @@ public class Generator {
 
         boolean color = false;
         if (w.getMode() == MandelbrotGUI.MODE_COLOR) color = true;
+
+        // Experimental
+        //Color[][] colors = apply(mandelK);
         Color[][] colors = getImage(mandelK, color);
         w.putData(colors, pix, pix);
 
@@ -155,5 +158,72 @@ public class Generator {
         }
 
         return plane;
+    }
+
+
+    /**
+     * Experimental!
+     *
+     * @param k
+     * @return
+     */
+    public Color[][] apply(int[][] k) {
+        //double cutOff = paramValue/100;
+        double cutOff = 0.01;
+
+        int height = k.length;
+        int width = k[0].length;
+        int pixels = height*width;
+
+        int[] histogram = new int[256];
+
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                histogram[k[i][j]] += 1;
+            }
+        }
+
+        int[] cuts = computeCuts(histogram, cutOff, pixels);
+
+        Color[][] outPixels = new Color[height][width];
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                int newk = 255 * (k[i][j] - cuts[0]) / (cuts[1] - cuts[0]);
+                if (newk >= 0 && newk <= 255) {
+                    outPixels[i][j] = greyScale[newk];
+                } else if (newk > 255) {
+                    outPixels[i][j] = voidColor;
+                } else if (newk < 0) {
+                    outPixels[i][j] = greyScale[0];
+                }
+            }
+        }
+
+        return outPixels;
+    }
+
+    private int[] computeCuts(int[] histogram, double cutOff, int pixels) {
+        int[] histAccum = new int[maxIterations+1];
+        histAccum[0] = histogram[0];
+        histAccum[maxIterations] = pixels;
+
+        int lowCut = 0;
+        int highCut = 0;
+        for (int i=1; i<maxIterations+1; i++) {
+            histAccum[i] = histAccum[i-1] + histogram[i];
+            if (histAccum[i] >= 1) {
+                lowCut = i;
+                break;
+            }
+        }
+        for (int i=maxIterations-1; i>0; i--) {
+            histAccum[i] = histAccum[i+1] - histogram[i];
+            if (histAccum[i] <= pixels*(1-cutOff)) {
+                highCut = i;
+                break;
+            }
+        }
+
+        return new int[] {lowCut, highCut};
     }
 }
