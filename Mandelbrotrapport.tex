@@ -1,0 +1,80 @@
+\documentclass[a4paper]{article}
+
+\usepackage[T1]{fontenc}     % För svenska bokstäver
+\usepackage[utf8]{inputenc}  % Teckenkodning UTF8
+\usepackage[swedish]{babel}  % För svensk avstavning och svenska
+\usepackage{graphicx}        % rubriker (t ex "Innehållsförteckning")
+\usepackage{fancyvrb}        % För programlistor med tabulatorer
+\usepackage{verbatim}
+\usepackage{hyperref}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\fvset{tabsize=4}            % Tabulatorpositioner
+\fvset{fontsize=\small}      % Lagom storlek för programlistor
+
+\title{Mandelbrot}
+\author{Erik Bjäreholt, D13 (dat13ebj@student.lu.se)\\Carl Ericsson, D13 (dat13cer@student.lu.se)}
+\date{Inlämningsdatum: 26 november 2013}        % Blir dagens datum om det utelämnas
+
+
+\begin{document}             % Början på dokumentet
+
+\begin{titlepage}
+\maketitle
+\end{titlepage}
+
+\section{Bakgrund} 
+Uppgiften är att beräkna mandelbrotsmängden som är en så kallad fraktal och rita upp den. En fraktal är en geometrisk figur vars mönster ser likadan ut när man zoomar in och ut i olika delar av den. För att illustrera detta ska vi använda oss av 3 olika klasser: \code{Mandelbrot}, \code{Complex}, och \code{Generator} där \code{Mandelbrot} innehåller \code{main}-metoden.
+Fönstret som ritar upp bilden ska vara av typen \code{MandelbrotGUI} som är en färdigskriven klass som ingår i kursen och har paketnamnet \code{se.lth.cs.ptdc.fractal.MandelbrotGUI} 
+
+Git-repository finnes här: \url{https://github.com/ErikBjare/Mandelbrot}
+
+\section{Modell}
+Programmet är som nämndes ovan uppbyggt av de tre klasserna \code{Mandelbrot}, \code{Complex} och \code{Generator}. Mandelbrot innehåller endast \code{main}-metoden som hanterar kommandon från MandelbrotGUI. Vissa av dessa kommandon körs sedan av \code{Generator}, bl.a. uträkning av mandelbrot-mängden och dess färgmatris (bild). Klassen \code{Complex} används för att representera komplexa tal.\\
+ 
+\begin{tabular}{lp{8cm}}
+    $Namn$ & $Beskrivning$\\
+      
+	\code{Mandelbrot}  &  
+    Huvudklass för programmet med \code{main}-metoden, instansierar \code{Complex} och \code{Generator}.\\
+
+	\code{Complex} & 
+	En klass som representerar ett komplext tal och innehålle en variabel för realdelen kallad re, och en för dess imaginärdel kallad im. Klassen innehåller även en del metoder för att behandla det komplexa talet. Används av \code{Generatorn}\\
+
+	\code{Generator} &
+	En klass som räknar ut mandelbrotsmängden och ritar upp en bild efter mandelbrotspunkterna i fönstret \code{Mandelbrot GUI}\\	  
+	      
+\end{tabular}\\
+
+\section{Brister och kommentarer}
+
+\subsection{Förlust av kontrast}
+Vid inzoomning hade en enkel implementation som fungerade genom fixerad mappning av k till färger lett till ett mindre färgspann vid inzoomning. Detta löste vi genom att använda en metod likt den som användes i laboration 8 där vi hittade det största respektive minsta k i det aktuella området av vilket vi räknade ut ett intervall för vilket vi mappade alla tillgängliga färger.
+
+\subsection{Double's begränsningar}
+På grund av double's begränsningar så korrupteras bilden då minimum och maximum på axlarna närmar sig varandra så att de blir såpass lika att double inte klarar av att beräkna en korrekt mellanskillnad. Talintervallets precision minskar med antalet inzoomningar vilket syns tydligt i figur 2. Detta fenomen hade kunnat gå att åtgärda om man istället för double använder BigDecimal men detta testades inte då det ansågs opraktiskt prestandamässigt.
+
+\begin{figure}[bbp]
+	\centering
+	\includegraphics[width=80mm]{BlackandWhite.png}
+	\caption{Beräkning av mandelbrotmängden med max-iterationer satt till 500}
+\end{figure}
+
+\begin{figure}[bbp]
+	\centering
+	\includegraphics[width=80mm]{Doublelimit.png}
+	\caption{Exempel på hur precisionen av double inte räcker till}
+\end{figure}
+
+\section{Programlistor}
+
+\subsection{Mandelbrot}
+\VerbatimInput{src/Mandelbrot.java}      
+
+\subsection{Complex}
+\VerbatimInput{src/Complex.java}
+
+\subsection{Generator}
+\VerbatimInput{src/Generator.java}
+
+\end{document}               % Slut på dokumentet
