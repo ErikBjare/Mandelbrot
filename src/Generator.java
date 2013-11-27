@@ -40,11 +40,18 @@ public class Generator {
         }
     }
 
+    /**
+     * Återställer vissa variabler
+     */
     public void reset() {
         lowK = maxIterations;
         highK = 0;
     }
 
+    /**
+     * Ritar upp mandelbrot i en MandelbrotGUI `w`
+     * @param w
+     */
     public void render(MandelbrotGUI w) {
         w.disableInput();
 
@@ -83,6 +90,12 @@ public class Generator {
         w.enableInput();
     }
 
+    /**
+     * Returnerar en matris med k-värdena för varje complext tal i matrisen `complex`
+     * @param complex En matris med flera komplexa talplanet
+     * @param res Precisionen som ska tas hänsyn till
+     * @return Matris med k-värden
+     */
     private int[][] getMandelK(Complex[][] complex, int res) {
         int[][] mandelK = new int[complex.length/res][complex[0].length/res];
         for (int icol = 0; icol < complex[0].length / res; icol++)
@@ -91,6 +104,12 @@ public class Generator {
         return mandelK;
     }
 
+    /**
+     * Returnerar en matris med färger från en matris med k-värden `mandelK`
+     * @param mandelK En matris med k-värden
+     * @param color Specifierar om en färgskala ska användas, annars gråskala
+     * @return Färgmatris baserad på k-värdena
+     */
     private Color[][] getImage(int[][] mandelK, boolean color) {
         Color[][] image = new Color[mandelK.length][mandelK[0].length];
         for (int icol = 0; icol < mandelK[0].length; icol++)
@@ -103,6 +122,11 @@ public class Generator {
         return image;
     }
 
+    /**
+     *
+     * @param k k-värdet att hämta färg för
+     * @return Punktens färg
+     */
     private Color getColor(double k) {
         if (k == maxIterations) {
             return voidColor;
@@ -112,6 +136,11 @@ public class Generator {
         }
     }
 
+    /**
+     *
+     * @param k k-värdet att hämta färg för
+     * @return Punktens färg
+     */
     private Color getGreyscale(double k) {
         if (k == maxIterations) {
             return voidColor;
@@ -121,6 +150,11 @@ public class Generator {
         }
     }
 
+    /**
+     *
+     * @param c Räknar ut k-värde för något complext tal c
+     * @return Punktens färg
+     */
     private int getK(Complex c) {
         Complex z = new Complex(0,0);
         z.add(c);
@@ -141,6 +175,16 @@ public class Generator {
         return maxIterations;
     }
 
+    /**
+     *
+     * @param minRe Vart den reella axeln ska börja
+     * @param maxRe Vart den reella axeln ska slute
+     * @param minIm Vart den imaginära axeln ska börja
+     * @param maxIm Vart den imaginära axeln ska sluta
+     * @param width Bredd i pixlar
+     * @param height Höjd i pixlar
+     * @return Det komplexa talplanet
+     */
     private Complex[][] mesh(double minRe, double maxRe,
                              double minIm, double maxIm,
                              int width, int height) {
@@ -162,7 +206,7 @@ public class Generator {
 
 
     /**
-     * Experimental!
+     * Experimental, not used!
      *
      * @param k
      * @return
@@ -202,6 +246,14 @@ public class Generator {
         return outPixels;
     }
 
+    /**
+     * Experimental, not used!
+     *
+     * @param histogram
+     * @param cutOff
+     * @param pixels
+     * @return
+     */
     private int[] computeCuts(int[] histogram, double cutOff, int pixels) {
         int[] histAccum = new int[maxIterations+1];
         histAccum[0] = histogram[0];
